@@ -3,17 +3,12 @@ import trottle from 'lodash.throttle';
 
 const STORAGE_KEY = "feedback-form-state";
 const formData = {};
-const parsedData = load(STORAGE_KEY);
-
 
 const formRef = document.querySelector('.feedback-form');
-const inputRef = document.querySelector('.feedback-form input');
-const textareaRef = document.querySelector('.feedback-form textarea');
 
-populateFormInput(parsedData);
+populateFormInput(load(STORAGE_KEY));
 
 formRef.addEventListener('input', trottle(onInput, 500, {leading: true, trailing: false,}));
-// formRef.addEventListener('input', onLengthCheck);
 formRef.addEventListener('submit', onSubmit);
 
 
@@ -27,23 +22,18 @@ function onInput(event) {
 }
 
 
-// function onLengthCheck(event) {
-//     if (!inputRef.value.trim() || !textareaRef.value.trim()) {
-//         localStorage.removeItem(STORAGE_KEY);
-//     }
-// }
-
 function onSubmit(event) {
     event.preventDefault();
-    console.log(parsedData);    
+    console.log(formData);    
     event.currentTarget.reset();
     localStorage.removeItem(STORAGE_KEY);
 }
 
 function populateFormInput(obj) {
     if (obj === undefined) return;
-    inputRef.value = obj.email;
-    textareaRef.value = obj.message;
+    Object.entries(obj).forEach(subArr => {
+        formRef.elements[subArr[0]].value = subArr[1];
+    });
 }
 
 
